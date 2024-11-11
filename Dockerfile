@@ -20,7 +20,7 @@ RUN chmod +x mvnw
 COPY src src
 
 # Build the application
-RUN ./mvnw clean package -DskipTests
+# RUN ./mvnw clean package -DskipTests
 
 # Stage 2: Run the application
 FROM openjdk:21
