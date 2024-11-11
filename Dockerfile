@@ -14,7 +14,7 @@ COPY pom.xml ./
 RUN chmod +x mvnw
 
 # Download dependencies
-RUN ./mvnw dependency:go-offline -B
+# RUN ./mvnw dependency:go-offline -B
 
 # Copy the source code
 COPY src src
