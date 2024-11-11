@@ -23,7 +23,7 @@ COPY src src
 RUN ./mvnw clean package -DskipTests
 
 # Stage 2: Run the application
-FROM openjdk:21
+FROM openjdk:17
 
 # Set the working directory
 WORKDIR /app
