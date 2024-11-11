@@ -1,5 +1,5 @@
-# Etapa 1: Construir a aplicação usando Maven
-FROM maven:3.9.0-openjdk-21 AS build
+# Etapa 1: Construir a aplicação usando Maven 4.0.0 (caso tenha uma imagem específica)
+FROM maven:4.0.0-eclipse-temurin-21 AS build
 
 # Definir o diretório de trabalho
 WORKDIR /app
