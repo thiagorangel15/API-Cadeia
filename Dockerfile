@@ -32,4 +32,4 @@ COPY --from=build /app/target/API-Cadeia-0.0.1-SNAPSHOT.jar /app/API-Cadeia.jar
 EXPOSE 8080
 
 # Comando para rodar a aplicação
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/API-Cadeia.jar"]
