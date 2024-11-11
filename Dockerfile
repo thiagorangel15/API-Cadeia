@@ -1,21 +1,26 @@
 # Etapa 1: Construir a aplicação usando Maven 4.0.0 (caso tenha uma imagem específica)
-FROM maven:4.0.0-eclipse-temurin-21 AS build
-
+FROM maven:3.9.4-eclipse-temurin-21 AS build
+LABEL authors="thiagorangel"
+LABEL description = "a"
 # Definir o diretório de trabalho
 WORKDIR /app
 
 # Copiar o pom.xml e baixar as dependências (para aproveitar o cache do Docker)
+COPY mvnw ./
+COPY .mvn .mvn
 COPY pom.xml .
-RUN mvn clean install -DskipTests
+
+RUN chmod +x mvnw
+RUN mvn dependency:go-offline -B
 
 # Copiar o código fonte do projeto
-COPY src /app/src
+COPY src src
 
 # Construir o aplicativo
-RUN mvn package -DskipTests
+RUN ./mvnw clean package -DskipTests
 
 # Etapa 2: Criar a imagem para rodar a aplicação com Java
-FROM eclipse-temurin:21-jre AS runtime
+FROM maven:3.9.4-eclipse-temurin-21 AS runtime
 
 # Definir o diretório de trabalho
 WORKDIR /app
@@ -27,4 +32,4 @@ COPY --from=build /app/target/API-Cadeia-0.0.1-SNAPSHOT.jar /app/API-Cadeia.jar
 EXPOSE 8080
 
 # Comando para rodar a aplicação
-ENTRYPOINT ["java", "-jar", "/app/API-Cadeia.jar"]
+ENTRYPOINT ["java", "-jar", "/app/ApiCadeiaApplication.jar"]
