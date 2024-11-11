@@ -17,10 +17,10 @@ RUN mvn dependency:go-offline -B
 COPY src src
 
 # Construir o aplicativo
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Etapa 2: Criar a imagem para rodar a aplicação com Java
-FROM eclipse-temurin:21-jre AS runtime
+FROM eclipse-temurin:21-jre 
 
 # Definir o diretório de trabalho
 WORKDIR /app
@@ -32,4 +32,4 @@ COPY --from=build /app/target/API-Cadeia-0.0.1-SNAPSHOT.jar /app/API-Cadeia.jar
 EXPOSE 8080
 
 # Comando para rodar a aplicação
-ENTRYPOINT ["java", "-jar", "/app/ApiCadeiaApplication.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
