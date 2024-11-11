@@ -14,13 +14,13 @@ COPY pom.xml ./
 RUN chmod +x mvnw
 
 # Download dependencies
-# RUN ./mvnw dependency:go-offline -B
+RUN ./mvnw clean dependency:go-offline -B
 
 # Copy the source code
 COPY src src
 
 # Build the application
-# RUN ./mvnw clean package -DskipTests
+RUN ./mvnw clean package -DskipTests
 
 # Stage 2: Run the application
 FROM openjdk:21
