@@ -1,38 +1,30 @@
-# Stage 1: Build the application
-FROM openjdk:21 AS build
-LABEL authors="bionemac"
-LABEL description="This is the Dockerfile for the Users service"
-# Set the working directory
+# Etapa 1: Construir a aplicação usando Maven
+FROM maven:3.9.0-eclipse-temurin-21 AS build
+
+# Definir o diretório de trabalho
 WORKDIR /app
 
-# Copy the Maven wrapper and pom.xml
-COPY mvnw ./
-COPY .mvn .mvn
-COPY pom.xml ./
+# Copiar o pom.xml e baixar as dependências (para aproveitar o cache do Docker)
+COPY pom.xml .
+RUN mvn clean install -DskipTests
 
-# Make the Maven wrapper executable
-RUN chmod +x mvnw
+# Copiar o código fonte do projeto
+COPY src /app/src
 
-# Download dependencies
-RUN ./mvnw clean dependency:go-offline -B
+# Construir o aplicativo
+RUN mvn package -DskipTests
 
-# Copy the source code
-COPY src src
+# Etapa 2: Criar a imagem para rodar a aplicação com Java
+FROM eclipse-temurin:21-jre AS runtime
 
-# Build the application
-RUN ./mvnw clean package -DskipTests
-
-# Stage 2: Run the application
-FROM openjdk:17
-
-# Set the working directory
+# Definir o diretório de trabalho
 WORKDIR /app
 
-# Copy the built jar from the build stage
-COPY --from=build /app/target/users-0.0.1-SNAPSHOT.jar users.jar
+# Copiar o arquivo JAR da etapa de construção
+COPY --from=build /app/target/API-Cadeia-0.0.1-SNAPSHOT.jar /app/API-Cadeia.jar
 
-# Expose port 8080
+# Expor a porta que o Spring Boot vai rodar (por padrão, 8080)
 EXPOSE 8080
 
-# Define the entrypoint
-ENTRYPOINT ["java", "-jar", "users.jar"]
+# Comando para rodar a aplicação
+ENTRYPOINT ["java", "-jar", "/app/API-Cadeia.jar"]
