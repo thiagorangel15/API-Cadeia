@@ -20,7 +20,7 @@ COPY src src
 RUN ./mvnw clean package -DskipTests
 
 # Etapa 2: Criar a imagem para rodar a aplicação com Java
-FROM maven:3.9.4-eclipse-temurin-21 AS runtime
+FROM eclipse-temurin-21-jre AS runtime
 
 # Definir o diretório de trabalho
 WORKDIR /app
