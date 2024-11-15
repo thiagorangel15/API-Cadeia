@@ -1,33 +1,23 @@
 package com.apicadeia.apicadeia.model;
 
-import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "cela")
 @Getter
-@XmlRootElement
-@Data
-@AllArgsConstructor
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class Cela {
-    @Setter
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int numero;
 
-
-    private List<Prisioneiro> prisioneiros;
-
-    public Cela(int numero) {
-        this.numero = numero;
-        this.prisioneiros = new ArrayList<>();
-    }
-
-
-    public void adicionarPrisioneiro(Prisioneiro prisioneiro) {
-        prisioneiros.add(prisioneiro);
-    }
-
-    public void removerPrisioneiro(Prisioneiro prisioneiro) {
-        prisioneiros.remove(prisioneiro);
-    }
+    @OneToMany(mappedBy = "cela", orphanRemoval = true)
+    private List<Prisioneiro> prisioneiros = new ArrayList<>();
 }

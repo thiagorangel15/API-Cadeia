@@ -1,36 +1,30 @@
 package com.apicadeia.apicadeia.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.persistence.*;
 import lombok.*;
 
+@Entity
+@Table(name = "prisioneiro")
 @Getter
-@XmlRootElement
-@Data
-@AllArgsConstructor
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class Prisioneiro {
-    @Setter
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Setter
+
+    @Column(nullable = false)
     private String nome;
-    @Setter
+
+    @Column(nullable = false)
     private int idade;
-    @Setter
+
+    @Column(nullable = false)
     private int tempoDePena;
 
-
-    @Setter
-    private int numeroCela;
-
-
-
-    public Prisioneiro(String nome, int idade, int tempoDePena, int numeroCela) {
-        this.nome = nome;
-        this.idade = idade;
-        this.tempoDePena = tempoDePena;
-        this.numeroCela = numeroCela;
-    }
-
+    @ManyToOne
+    @JoinColumn(name = "numero", nullable = false)
+    private Cela cela;
 }

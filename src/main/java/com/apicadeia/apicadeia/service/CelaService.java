@@ -1,44 +1,45 @@
 package com.apicadeia.apicadeia.service;
 
 import com.apicadeia.apicadeia.model.Cela;
+import com.apicadeia.apicadeia.repositories.CelaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CelaService {
 
-    private List<Cela> celas = new ArrayList<>();
-
-
+    @Autowired
+    private CelaRepository celaRepository;
 
     public Cela criarCela(Cela cela) {
-        celas.add(cela);
-        return cela;
+        return celaRepository.save(cela);
     }
-
 
     public List<Cela> listarTodasCelas() {
-        return celas;
+        return celaRepository.findAll();
     }
 
-    public Optional<Cela> buscarCelaPorNumero(int numero) {
-        return celas.stream().filter(cela -> cela.getNumero() == numero).findFirst();
+    public Cela buscarCelaPorNumero(int numero) {
+        return celaRepository.findById(numero)
+                .orElseThrow(() -> new IllegalArgumentException("Cela não encontrada"));
     }
-
 
     public Cela atualizarCela(int numero, Cela celaAtualizada) {
-        Optional<Cela> celaExistente = buscarCelaPorNumero(numero);
-        if (celaExistente.isPresent()) {
-            Cela cela = celaExistente.get();
-            return cela;
-        }
-        return null;
+        Cela celaExistente = celaRepository.findById(numero)
+                .orElseThrow(() -> new IllegalArgumentException("Cela não encontrada"));
+
+        // Atualizar os campos necessários
+        celaExistente.setNumero(celaAtualizada.getNumero());
+
+        return celaRepository.save(celaExistente);
     }
 
-
     public void deletarCela(int numero) {
-        celas.removeIf(cela -> cela.getNumero() == numero);
+        if (!celaRepository.existsById(numero)) {
+            throw new IllegalArgumentException("Cela não encontrada");
+        }
+        celaRepository.deleteById(numero);
     }
 }

@@ -7,18 +7,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/api")
+@RequestMapping("/api/celas")
 public class CelaController {
 
     @Autowired
     private CelaService celaService;
 
-    @PostMapping(value = "/celas", consumes = {"application/json", "application/xml"},
-            produces = {"application/json", "application/xml"})
+    @PostMapping(consumes = {"application/json", "application/xml"}, produces = {"application/json", "application/xml"})
     public ResponseEntity<Cela> criarCela(@RequestBody Cela cela) {
         try {
             Cela novaCela = celaService.criarCela(cela);
@@ -28,47 +26,43 @@ public class CelaController {
         }
     }
 
-    @GetMapping(value = "/celas", produces = {"application/json", "application/xml"})
+    @GetMapping(produces = {"application/json", "application/xml"})
     public ResponseEntity<List<Cela>> listarTodasCelas() {
         try {
-            List<Cela> celas = celaService.listarTodasCelas();
-            return ResponseEntity.ok(celas);
+            return ResponseEntity.ok(celaService.listarTodasCelas());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @GetMapping(value = "/buscar-cela", produces = {"application/json", "application/xml"})
-    public ResponseEntity<Cela> buscarCelaPorNumero(@RequestParam int numero) {
+    @GetMapping(value = "/{numero}", produces = {"application/json", "application/xml"})
+    public ResponseEntity<Cela> buscarCelaPorNumero(@PathVariable int numero) {
         try {
-            Optional<Cela> cela = celaService.buscarCelaPorNumero(numero);
-            return cela.map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            Cela cela = celaService.buscarCelaPorNumero(numero);
+            return ResponseEntity.ok(cela);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
-    @PutMapping(value = "/celas", consumes = {"application/json", "application/xml"},
-            produces = {"application/json", "application/xml"})
-    public ResponseEntity<Cela> atualizarCela(@RequestParam int numero, @RequestBody Cela celaAtualizada) {
+    @PutMapping(value = "/{numero}", consumes = {"application/json", "application/xml"}, produces = {"application/json", "application/xml"})
+    public ResponseEntity<Cela> atualizarCela(@PathVariable int numero, @RequestBody Cela celaAtualizada) {
         try {
             Cela cela = celaService.atualizarCela(numero, celaAtualizada);
-            if (cela != null) {
-                return ResponseEntity.ok(cela);
-            }
+            return ResponseEntity.ok(cela);
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
         }
     }
 
-    @DeleteMapping(value = "/celas", produces = {"application/json", "application/xml"})
-    public ResponseEntity<Void> deletarCela(@RequestParam int numero) {
+    @DeleteMapping("/{numero}")
+    public ResponseEntity<Void> deletarCela(@PathVariable int numero) {
         try {
             celaService.deletarCela(numero);
             return ResponseEntity.noContent().build();
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }
